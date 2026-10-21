@@ -66,7 +66,7 @@ function applyMonth(m,snap){const o={};snap.docs.forEach(d=>{S.mExists[m+"/"+d.i
 function watchCycle(){const c=cycleOf(S.date);monthsIn(c.start,c.end).forEach(m=>{if(live[m])return;
   live[m]=S.db.collection("months/"+m+"/sheets").onSnapshot(snap=>{applyMonth(m,snap);render()},err)})}
 async function loadRange(from,to){await Promise.all(monthsIn(from,to).filter(m=>!live[m]).map(async m=>{const snap=await S.db.collection("months/"+m+"/sheets").get();applyMonth(m,snap)}))}
-function err(e){main.innerHTML='<div class="empty"><b>The register could not load</b>'+esc(e&&e.message||"Reload the page to try again.")+'</div>'}
+function err(e){const perm=e&&(e.code==="permission-denied"||/permission/i.test(e.message||""));main.innerHTML='<div class="empty"><b>'+(perm?"Firebase is blocking the register":"The register could not load")+'</b>'+esc(perm?"Your sign-in is not allowed to use the register yet. In the Firebase console open tkr-operations-app, then Firestore Database, then Rules, add the TKR Attendance rules and tap Publish. Then close and open the app again.":(e&&e.message||"Check your signal and open the app again."))+'</div>'}
 function denied(e){return e&&(e.code==="invalid_argument"||e.code==="permission-denied")}
 function writeSheet(sheet,patch,field){ // patch: {empId:{date:val}} for dates in S.date's month; field: "marks" or "ot"
   field=field||"marks";const id=SHEET_ID[sheet],m=monthOf(S.date);
@@ -136,7 +136,9 @@ function render(){
   if(!S.db)return;
   if(S.emps===null){main.innerHTML='<div class="empty"><b>Opening the register</b>Loading employees and this cycle\'s marks.</div>';return}
   if(S.view==="users"&&!isAdmin())S.view="mark";
-  if(!activeEmps().length&&S.view!=="people"&&S.view!=="users"){main.innerHTML='<div class="empty"><b>No employees yet</b>Add the first employee under Employees.</div>';return}
+  if(!activeEmps().length&&S.view!=="people"&&S.view!=="users"){main.innerHTML=isAdmin()?'<div class="empty"><b>No employees yet</b>Load the TKR Attendance data file to bring in your employees, shift rotas and marks.<div class="bar" style="justify-content:center;margin-top:14px"><button class="btn gold" id="emptyLoad">Load data file</button></div><p class="note" id="uMsg" role="status"></p><input type="file" id="dataIn" accept=".json,application/json" hidden></div>':'<div class="empty"><b>No employees yet</b>Ask admin to load the register.</div>';
+    if(isAdmin()){$("emptyLoad").onclick=()=>$("dataIn").click();$("dataIn").onchange=ev=>{const f=ev.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{loadBackup(JSON.parse(rd.result))}catch(e){toast("That file is not a TKR Attendance data file")}};rd.readAsText(f);ev.target.value=""}}
+    return}
   ({mark:viewMark,daily:viewDaily,cycle:viewCycle,export:viewExport,flags:viewFlags,people:viewPeople,users:viewUsers}[S.view]||viewMark)();
 }
 
@@ -353,13 +355,13 @@ function viewUsers(){const row=(em,role)=>'<tr><td>'+esc(em)+'</td><td>'+(role==
   $("saveData").onclick=saveBackup;
 }
 async function loadBackup(b){if(!b||!b.employees||!b.months){toast("That file is not a TKR Attendance data file");return}
-  const msg=$("uMsg");msg.textContent="Loading the data file…";
+  const msg=$("uMsg")||{set textContent(v){toast(v)}};msg.textContent="Loading the data file…";
   try{await S.db.doc("config/employees").set({list:b.employees});
     if(b.settings)await S.db.doc("config/settings").set(b.settings);
     for(const id in (b.rota||{}))await S.db.doc("cycles/"+id).set(b.rota[id]);
     for(const m in b.months)for(const sh in b.months[m])await S.db.doc("months/"+m+"/sheets/"+sh).update(b.months[m][sh]);
     msg.textContent="Data file loaded: "+b.employees.length+" employees, "+Object.keys(b.months).length+" months of marks.";toast("Data file loaded")}
-  catch(e){msg.textContent="Loading stopped: "+(e.message||"try again")}}
+  catch(e){msg.textContent=denied(e)?"Your sign-in is not allowed to use the register yet. In the Firebase console open tkr-operations-app, then Firestore Database, then Rules, add the TKR Attendance rules and tap Publish. Then close and open the app again.":"Loading stopped: "+(e.message||"try again")}}
 async function saveBackup(){const b={employees:S.emps||[],settings:{cycles:CUSTOM},rota:S.cycles,months:{}};
   const ms=new Set();Object.keys(S.rota).forEach(g=>Object.keys(S.rota[g]).forEach(d=>ms.add(monthOf(d))));Object.keys(S.mm).forEach(m=>ms.add(m));
   for(const m of ms){if(!S.mm[m]){const snap=await S.db.collection("months/"+m+"/sheets").get();applyMonth(m,snap)}b.months[m]={};for(const sh in S.mm[m]||{})b.months[m][sh]={sheet:sh,month:m,marks:S.mm[m][sh].marks,ot:S.mm[m][sh].ot}}
