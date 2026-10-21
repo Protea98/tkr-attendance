@@ -22,3 +22,19 @@
       allow read: if attViewer();
       allow write: if attCapturer();
     }
+    match /config/attEmployees {
+      allow read: if attViewer();
+      allow write: if attCapturer();
+    }
+    match /config/attSettings {
+      allow read: if attViewer();
+      allow write: if attCapturer();
+    }
+    match /attRota/{id} {
+      allow read: if attViewer();
+      allow write: if attCapturer();
+    }
+    match /attMonths/{month}/sheets/{sheet} {
+      allow read: if attViewer();
+      allow write: if attCapturer();
+    }
