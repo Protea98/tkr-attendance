@@ -1,0 +1,24 @@
+// TKR Attendance — add these lines to the Firestore rules of the tkr-operations-app project
+// (Firebase console → Firestore Database → Rules), inside the existing
+//   match /databases/{database}/documents { ... }
+// block, next to the Daily Task Board rules. Then click Publish.
+
+    function attEmail() { return request.auth != null && request.auth.token.email != null ? request.auth.token.email.lower() : ""; }
+    function attAdmin() { return attEmail() in ["muneer@tkroperations.com", "amogelang@tkroperations.com"]; }
+    function attRoles() { return get(/databases/$(database)/documents/config/attendance).data; }
+    function attHasRoles() { return exists(/databases/$(database)/documents/config/attendance); }
+    function attCapturer() { return attAdmin() || (attHasRoles() && attEmail() in attRoles().get("capturers", [])); }
+    function attViewer() { return attCapturer() || (attHasRoles() && attEmail() in attRoles().get("viewers", [])); }
+
+    match /config/attendance {
+      allow read: if attEmail() != "";
+      allow write: if attAdmin();
+    }
+    match /attCycles/{id} {
+      allow read: if attViewer();
+      allow write: if attAdmin();
+    }
+    match /attMarks/{id} {
+      allow read: if attViewer();
+      allow write: if attCapturer();
+    }

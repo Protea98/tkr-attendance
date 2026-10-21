@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TKR Attendance</title>
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/maskable-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Attendance">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="stylesheet" href="style.css">
+<script src="lib/xlsx.full.min.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><img src="icons/logo-96.png" alt="TKR Operations"><div><b>TKR Attendance</b><span>Tharisa Mine · Timesheet 14th to 13th</span></div></div>
+    <div class="cyc" id="cycBar" hidden>
+      <select id="cycleSel" aria-label="Timesheet cycle"></select>
+      <button id="importBtn" type="button" hidden>Import timesheet</button>
+      <button id="exportBtn" type="button">Export to Excel</button>
+      <button id="installBtn" type="button" hidden>Install app</button>
+      <button id="outBtn" type="button">Sign out</button>
+      <input id="fileIn" type="file" accept=".xlsx,.xls" hidden>
+    </div>
+    <nav class="tabs" role="tablist" id="tabs" hidden>
+      <button role="tab" data-v="report" aria-selected="true">Daily report</button>
+      <button role="tab" data-v="capture" aria-selected="false">Capture</button>
+      <button role="tab" data-v="sheet" aria-selected="false">Timesheet</button>
+      <button role="tab" data-v="people" aria-selected="false">Employees</button>
+      <button role="tab" data-v="users" aria-selected="false" id="usersTab" hidden>Users</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="signin" hidden>
+  <form class="panel signin" id="signForm">
+    <h2>Sign in</h2>
+    <p class="small muted">Use the email and password you were given for TKR Attendance.</p>
+    <label for="sEmail">Email</label><input id="sEmail" type="email" autocomplete="username" required>
+    <label for="sPass">Password</label><input id="sPass" type="password" autocomplete="current-password" required>
+    <button class="btn gold" type="submit" id="sBtn">Sign in</button>
+    <button class="btn" type="button" id="forgot">Forgot password</button>
+    <p class="small" id="sMsg" role="status"></p>
+  </form>
+</main>
+
+<main class="wrap" id="main" hidden></main>
+<div class="toast" id="toast" hidden></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
