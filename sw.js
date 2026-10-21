@@ -1,7 +1,7 @@
 // Opens the app straight from the phone (fast, works with no signal) and fetches any update in the
 // background; the update shows the next time the app is opened. Bump VERSION when the app files change.
 // Firebase traffic (other websites) is never touched here; Firebase keeps its own offline copy.
-const VERSION = "att-v2";
+const VERSION = "att-v3";
 const FILES = ["./", "index.html", "style.css", "app.js", "manifest.webmanifest",
   "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-192.png", "icons/maskable-512.png", "icons/logo-96.png",
   "lib/xlsx.full.min.js", "lib/firebase.js"];

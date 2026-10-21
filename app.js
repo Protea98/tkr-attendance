@@ -5,7 +5,7 @@ import {initializeApp,deleteApp,getAuth,signInWithEmailAndPassword,signOut,onAut
 const firebaseConfig={apiKey:"AIzaSyALzOBLObrONGVD1bS0Tz02aNKhQ40TRoI",authDomain:"tkr-operations-app.firebaseapp.com",projectId:"tkr-operations-app",
   storageBucket:"tkr-operations-app.firebasestorage.app",messagingSenderId:"158080247079",appId:"1:158080247079:web:7cb7786d2b7f9ee172b502"};
 // Must match the Firestore rules (firestore-rules.txt).
-const ADMINS=["muneer@tkroperations.com","amogelang@tkroperations.com"];
+const ADMINS=["muneer@tkroperations.com","amogelang@tkroperations.com","amogelangmabilu56@gmail.com"];
 const fbApp=initializeApp(firebaseConfig);const auth=getAuth(fbApp);
 let fs;try{fs=initializeFirestore(fbApp,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})})}catch(e){fs=initializeFirestore(fbApp,{})}
 let email="",roles={capturers:[],viewers:[]};

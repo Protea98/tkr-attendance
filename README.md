@@ -16,7 +16,7 @@ Attendance % = present days ÷ (present days + exception days). Exceptions are A
 Cycles run from the 14th to the 13th. Tap the cycle in the header to set any cycle's start and end dates.
 
 ## Access
-- Admins: muneer@tkroperations.com, amogelang@tkroperations.com
+- Admins: muneer@tkroperations.com, amogelang@tkroperations.com, amogelangmabilu56@gmail.com
 - Capturers – mark attendance, manage employees and cycles, see all reports.
 - Viewers – see the reports only.
 

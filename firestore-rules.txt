@@ -4,7 +4,7 @@
 // block, next to the Daily Task Board rules. Then click Publish.
 
     function attEmail() { return request.auth != null && request.auth.token.email != null ? request.auth.token.email.lower() : ""; }
-    function attAdmin() { return attEmail() in ["muneer@tkroperations.com", "amogelang@tkroperations.com"]; }
+    function attAdmin() { return attEmail() in ["muneer@tkroperations.com", "amogelang@tkroperations.com", "amogelangmabilu56@gmail.com"]; }
     function attRoles() { return get(/databases/$(database)/documents/config/attendance).data; }
     function attHasRoles() { return exists(/databases/$(database)/documents/config/attendance); }
     function attCapturer() { return attAdmin() || (attHasRoles() && attEmail() in attRoles().get("capturers", [])); }
